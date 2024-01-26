@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>店内注文App | メニュー追加</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-3 col-11 col-sm-8 col-md-6 col-lg-5 shadow p-3 mb-5 bg-body rounded">
+        <div class="container mt-3">
+            <div class="text-center p-2">
+                <h2>Edit Menu Item</h2>
+            </div>
+
+            <form action="updateMenuAction" method="post" enctype="multipart/form-data" th:object="${menuObj}">
+				<input type="hidden" th:field="*{menuId}" th:value="*{menuId}">
+                <div class="container mt-3">
+                    <input style="display: none;" type="file" id="fileChooser" accept="image/*" name="image"
+                        onchange="previewImage(event)" th:field="*{menuPhoto}" th:value="*{menuPhoto}">
+                    <img th:src="'data:image/*;base64, ' +*{photoBase64String}" id="imagePreview" alt="Image Preview"
+                        class="w-100 img-thumbnail" style="height: 200px;object-fit: cover;"
+                        onclick="clickFileChooser()">
+                </div>
+
+                <div class="container mt-3">
+                    <label for="iName">Item name</label>
+                    <input th:field="*{menuName}" th:value="*{menuName}"name="iName" class="form-control" type="text" placeholder="add item name" id="iName" >
+                </div>
+
+                <div class="container mt-3">
+                    <label for="iPrice">Item price</label>
+                    <input th:field="*{menuPrice}" value="*{menuPrice}" name="iPrice" class="form-control" type="text" placeholder="add item price" id="iPrice">
+                </div>
+
+                <div class="container mt-3">
+                    <label for="">Item Category</label>
+                    <select th:field="*{menuCategory}"   name="iCategory" class="form-select" aria-label="Default select example">
+                        <option th:value="0" >Set Menu</option>
+                        <option th:value="1" >Single Menu</option>
+                        <option th:value="2" >Desset Menu</option>
+                        <option th:value="3" >Soft Drink Menu</option>
+                        <option th:value="4" >Whiskey Menu</option>
+                        <option th:value="5" >Beer Menu</option>
+                        <option th:value="6" >Non-Alcohol Menu</option>
+                    </select>
+                </div>
+
+                <div class="container mt-3">
+                    <label for="iIngre">Ingredient</label>
+                    <textarea th:field="*{menuDetail}" name="iIngre" class="form-control" id="iIngre" cols="30" rows="5"
+                        placeholder=" ingredient"></textarea>
+                </div>
+
+                <div class="container mt-3 p-2 d-grid gap-2">
+                    <button type="submit" class="btn btn-success">Edit</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Page JS -->
+        <script src="assets/js/add_menu_item.js"></script>
+</body>
+
+</html>
