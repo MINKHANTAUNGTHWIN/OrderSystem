@@ -11,6 +11,11 @@
 		.smaller-placeholder::placeholder {
 			font-size: 12px;
 		}
+		
+		select option:disabled {
+			background-color: rgb(255, 0, 0);
+			color: white;
+		}
 	</style>
 </head>
 
@@ -39,6 +44,16 @@
 					<div class="input-group mb-3">
 						<input type="password" class="form-control bg-light fs-6 fw-light  smaller-placeholder"
 							placeholder="パスワード入力してください。" name="user_pwd" id="floatingInput">
+					</div>
+					
+					<div class="mb-3">
+						<label class="form-label">Select Table</label>
+						<select class="form-select" name="tableId" th>
+							<option  th:each="Id : ${tableList}" th:object="${Id}" th:disabled="*{tableStatus == 0 ? 'true' : 'false'}">
+								<span th:text="*{tableId}"></span>
+							</option>
+							
+						</select>
 					</div>
 
 	

@@ -1,13 +1,11 @@
 package com.res.order.controller;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.res.order.dao.Menu;
+import com.res.order.dao.Order;
+import com.res.order.dao.Table;
 import com.res.order.database.DBAccess;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class MenuController {
@@ -39,7 +41,7 @@ public class MenuController {
 //		
 //		try {
 //			Class.forName("com.mysql.cj.jdbc.Driver");
-//			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/res_order_app", "root", "root");
+//			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/res_order_system", "root", "root");
 //			String sql = "INSERT INTO all_menu (menu_photo,menu_name,menu_price,menu_category,menu_detail) VALUES (?,?,?,?,?)";
 //			PreparedStatement pstm = conn.prepareStatement(sql);
 //			pstm.setBytes(1,menuPhoto.getBytes());
@@ -62,22 +64,7 @@ public class MenuController {
 	public String addMenuAction(@ModelAttribute Menu menu) {
 		System.out.println("Add Menu Action");
 		
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection conn = DriverManager.getConnection("jdbc:mysql://mysql-30bbb2cd-first-project-2024.a.aivencloud.com:15724/res_order_app?sslmode=require", "avnadmin", "AVNS_PWS5KJ-LqBEeeLMayFX");
-			String sql = "INSERT INTO all_menu (menu_photo,menu_name,menu_price,menu_category,menu_details) VALUES (?,?,?,?,?)";
-			PreparedStatement pstm = conn.prepareStatement(sql);
-			pstm.setBytes(1,menu.getMenuPhoto().getBytes());
-			pstm.setString(2, menu.getMenuName());
-			pstm.setString(3, menu.getMenuPrice());
-			pstm.setInt(4, menu.getMenuCategory());
-			pstm.setString(5, menu.getMenuDetail());
-			
-			pstm.executeUpdate();
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
+		DBAccess.addMenuAction(menu);
 		
 		return"redirect:adminHome";
 	}
@@ -87,22 +74,10 @@ public class MenuController {
 	
 	@PostMapping("/editMenuAction")
 	public String editMenuAction(@ModelAttribute Menu menu) {
-		System.out.println(menu.getMenuId());
-		System.out.println(menu.getMenuPrice());
+		
 		
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection conn = DriverManager.getConnection("jdbc:mysql://mysql-30bbb2cd-first-project-2024.a.aivencloud.com:15724/res_order_app?sslmode=require", "avnadmin", "AVNS_PWS5KJ-LqBEeeLMayFX");
-			String sql = "UPDATE all_menu SET menu_photo = ?,menu_name = ?, menu_price= ?, menu_category= ?, menu_details=? WHERE menu_id=?";
-			PreparedStatement pstm = conn.prepareStatement(sql);
-			pstm.setBytes(1,menu.getMenuPhoto().getBytes());
-			pstm.setString(2, menu.getMenuName());
-			pstm.setString(3, menu.getMenuPrice());
-			pstm.setInt(4, menu.getMenuCategory());
-			pstm.setString(5, menu.getMenuDetail());
-			pstm.setInt(6, menu.getMenuId());
-			
-			pstm.executeUpdate();
+			 DBAccess.editMenuAction(menu);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -117,18 +92,7 @@ public class MenuController {
 	@GetMapping("deleteMenuAction")
 	public String deleteMenuAction(@ModelAttribute Menu menu) {
 		
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection conn = DriverManager.getConnection("jdbc:mysql://mysql-30bbb2cd-first-project-2024.a.aivencloud.com:15724/res_order_app?sslmode=require", "avnadmin", "AVNS_PWS5KJ-LqBEeeLMayFX");
-			String sql = "DELETE FROM all_menu WHERE menu_id=?";
-			PreparedStatement pstm = conn.prepareStatement(sql);
-			pstm.setInt(1,menu.getMenuId());
-			
-			pstm.executeUpdate();
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
+		DBAccess.deleteMenuAction(menu);
 		
 		return "redirect:adminAllMenu";
 	}
@@ -137,13 +101,9 @@ public class MenuController {
 	public String toEditMenuPage(Model model,@RequestParam("menuId") int menuId) {
 		
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection conn = DriverManager.getConnection("jdbc:mysql://mysql-30bbb2cd-first-project-2024.a.aivencloud.com:15724/res_order_app?sslmode=require", "avnadmin", "AVNS_PWS5KJ-LqBEeeLMayFX");
-			String sql = "SELECT * FROM all_menu WHERE menu_id=?";
-			PreparedStatement pstm = conn.prepareStatement(sql);
-			pstm.setInt(1, menuId);
 			
-			ResultSet rs = pstm.executeQuery();
+			
+			ResultSet rs = DBAccess.editMenu(menuId);
 			Menu menuObj = new Menu();
 			if(rs.next()) {
 				menuObj.setMenuId(rs.getInt("menu_id"));
@@ -162,17 +122,25 @@ public class MenuController {
 	}
 	
 	
+	@Autowired
+	HttpSession httpSession;
 	//AllMenu Page for Customer Start
 	@GetMapping("/allMenu")
 	public String toAllMenuPage(Model model) {
-		
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection conn = DriverManager.getConnection("jdbc:mysql://mysql-30bbb2cd-first-project-2024.a.aivencloud.com:15724/res_order_app?sslmode=require", "avnadmin", "AVNS_PWS5KJ-LqBEeeLMayFX");
-			String sql = "SELECT * FROM all_menu";
-			PreparedStatement pstm = conn.prepareStatement(sql);
+			int tableId =(int)httpSession.getAttribute("tableId");
+			ResultSet rs = DBAccess.toAllMenu(tableId);
 			
-			ResultSet rs = pstm.executeQuery(); //multiple record
+			if(rs.next()) {
+				httpSession.setAttribute("customerId", rs.getInt("customer_id"));
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		try {
+			
+			ResultSet rs = DBAccess.adminAllMenu(); //multiple record
 			List <Menu> setMenu = new ArrayList<>();
 			List <Menu> tanpinMenu = new ArrayList<>();
 			List <Menu> dessertMenu = new ArrayList<>();
@@ -230,7 +198,7 @@ public class MenuController {
 			e.printStackTrace();
 		}
 		
-		return "all_menu";
+		return "Customer_all_menu";
 	}
 	//AllMenu Page for Customer End
 	
@@ -239,12 +207,7 @@ public class MenuController {
 		public String toAdminAllMenuPage(Model model) {
 			
 			try {
-				Class.forName("com.mysql.cj.jdbc.Driver");
-				Connection conn = DriverManager.getConnection("jdbc:mysql://mysql-30bbb2cd-first-project-2024.a.aivencloud.com:15724/res_order_app?sslmode=require", "avnadmin", "AVNS_PWS5KJ-LqBEeeLMayFX");
-				String sql = "SELECT * FROM all_menu";
-				PreparedStatement pstm = conn.prepareStatement(sql);
-				
-				ResultSet rs = pstm.executeQuery(); //multiple record
+				ResultSet rs = DBAccess.adminAllMenu();//multiple record
 				List <Menu> setMenu = new ArrayList<>();
 				List <Menu> tanpinMenu = new ArrayList<>();
 				List <Menu> dessertMenu = new ArrayList<>();
@@ -307,27 +270,12 @@ public class MenuController {
 		//adminAllMenu Page End
 	
 	
-	@GetMapping("updateStockStatusAction")
-	public String changeStockStatus(Model model,@RequestParam("menuId") int menuId,
-			@RequestParam("status") int status) {
-		try {
-			
-			DBAccess.changeStockStatus(menuId,status);
-			
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-		
-		return "redirect:adminAllMenu";
-	}
-	
-//	@GetMapping("updateStockStatusAction1")
-//	public String changeStockStatus1(Model model,@RequestParam("menuId") int menuId,
+//	@GetMapping("updateStockStatusAction")
+//	public String changeStockStatus(Model model,@RequestParam("menuId") int menuId,
 //			@RequestParam("status") int status) {
 //		try {
-//			DBAccess.changeStockStatus(menuId,1);
 //			
+//			DBAccess.changeStockStatus(menuId,status);
 //			
 //		} catch (Exception e) {
 //			// TODO: handle exception
@@ -336,5 +284,162 @@ public class MenuController {
 //		
 //		return "redirect:adminAllMenu";
 //	}
+	
+	
+//	@GetMapping("fillStock")
+//	public String fillStock() {
+//		try {
+//			
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//			e.printStackTrace();
+//		}
+//		return "redirect:adminAllMenu";
+//		
+//	}
+//	
+//	@GetMapping("emptyStock")
+//	public String emptyStock() {
+//		try {
+//			
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//			e.printStackTrace();
+//		}
+//		return "redirect:adminAllMenu";
+//	}
+	
+	
+	
+	
+	  @GetMapping("emptyStock") 
+	  public String emptyStock(Model model,@RequestParam("menuId") int menuId) { 
+		  try {
+			  DBAccess.emptyStock(menuId);
+		  }
+		  catch (Exception e) {
+			  // TODO: handle exception e.printStackTrace(); }
+			  e.printStackTrace();
+		  }
+	  
+	  return "redirect:adminAllMenu"; }
+	  
+	  @GetMapping("fillStock") 
+	  public String fillStock(Model model,@RequestParam("menuId") int menuId) { 
+		  try {
+			  DBAccess.fillStock(menuId);
+		  }
+		  catch (Exception e) {
+			  // TODO: handle exception e.printStackTrace(); }
+			  e.printStackTrace();
+		  }
+	  
+	  return "redirect:adminAllMenu"; }
+	  
+	  @GetMapping("okaikeiMachi")
+	  public String okaikeiMachi(Model model) {
+		  
+		  
+		  try {
+			  ResultSet rs = DBAccess.okaikeiMachi();
+			  
+			  List<Table> customTableList = new ArrayList<>();
+			  while(rs.next()) {
+				  Table customTable = new Table();
+				  customTable.setTableId(rs.getInt("table_id"));
+				  customTable.setCustomerId(rs.getInt("customer_id"));
+				  
+				  
+				  
+				  customTableList.add(customTable);
+				  
+			  }
+			  model.addAttribute("customerList",customTableList);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		  return "okaikeimachi";
+	  }
+	  
+	  @GetMapping("shiharaiMeisaiAction")
+	  public String shiharaiMeisai(@RequestParam("customid")int customerid,@RequestParam("tableid")int tableid,
+			  @RequestParam("pageid")int pageId,Model model) {
+		  
+		  try {
+			  ResultSet rs = DBAccess.shiharaiMeisai(customerid);
+			  List <Order> order = new ArrayList<>();
+				int subTotal = 0;
+				while(rs.next()) {
+					Order menuPo = new Order();
+					menuPo.setCustomerId(rs.getInt("customer_id"));
+					menuPo.setOrderItemName(rs.getString("order_item_name"));
+					menuPo.setOrderPrice(rs.getInt("order_price"));
+					menuPo.setOrderquantity(rs.getInt("order_quantity"));
+					menuPo.setOrderId(rs.getInt("order_id"));
+					menuPo.setPageId(rs.getInt(pageId));
+					
+					
+					subTotal += menuPo.getOrderPrice() * menuPo.getOrderquantity();
+					
+					
+					
+					order.add(menuPo);
+					
+				}
+				model.addAttribute("order",order);
+				
+				model.addAttribute("subTotal",subTotal);
+				model.addAttribute("tax",subTotal * 0.1);
+				model.addAttribute("total", subTotal + (subTotal * 0.1));
+				
+				model.addAttribute("cId", customerid);
+				model.addAttribute("tId", tableid);
+				model.addAttribute("pageId",pageId);
+				// pageid
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		  return "shiharaiMeisai";
+	  }
+	  
+	  @GetMapping("shiharaiKanryouAction")
+	  public String shiharaiKanryouAction(@RequestParam("customerId")int customerid,@RequestParam("tableid")int tableid) {
+		  try {
+			  DBAccess.shiharaiKanryouActionChangeCustomerCheckStatus(customerid);
+			  DBAccess.shiharaiKanryouActionChangeTableStatus(tableid);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		  return"redirect:okaikeiMachi";
+	  }
+	  
+	  @GetMapping("journelAction")
+	  public String journelAction(Model model) {
+		  try {
+			  ResultSet rs = DBAccess.journelAction();
+			  List<Table> cTable = new ArrayList<>();
+			  while(rs.next()) {
+				  Table tableList = new Table();
+				  tableList.setTableStatus(rs.getInt("check_status"));
+				  tableList.setCustomerId(rs.getInt("customer_id"));
+				  tableList.setTableId(rs.getInt("table_id"));
+				  tableList.setCheckInTime(rs.getString("checkin_time"));
+				  tableList.setCheckOutTime(rs.getString("checkout_time"));
+				  cTable.add(tableList);
+			  }
+			model.addAttribute("cTable",cTable);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		  return "journel";
+	  }
+	  
+	  
 	
 }

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="style.css">
+
+	<title>店内注文App | カート</title>
+</head>
+
+<body>
+	<div class="col-5 m-auto p-2">
+		<h2 class=" text-center">カート<i class="bi bi-cart3"></i></h2>
+		
+		<div class="d-flex flex-column">
+			
+			<!-- Item -->
+			<div th:each="obj : ${order}" class="flex-fill d-flex flex-column justify-content-between p-2 border mb-2" th:object="${obj}">
+
+				<div class="">
+					<h3 th:text="*{orderItemName}">Food Name</h3>
+				</div>
+
+				<div class="d-flex justify-content-between">
+					<div th:text="*{orderPrice}" class="">Prize : </div>
+					<div class="">
+						<i class="bi bi-plus"></i>
+						<span th:text="*{orderquantity}"></span>
+						<i class="bi bi-dash"></i>
+					</div>	
+				</div>
+				
+		<div class="d-flex mt-3">
+			<a th:href="'cancleOrder?orderId=' + *{orderId}" class="btn btn-danger form-control">Cancle</a>
+			<a th:href="'orderNow?orderId=' + *{orderId}" class="btn btn-primary form-control">Order</a>
+		</div>
+			</div>
+		</div>
+
+	
+
+	</div>
+</body>
+
+</html>

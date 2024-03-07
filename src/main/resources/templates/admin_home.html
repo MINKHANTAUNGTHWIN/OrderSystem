@@ -13,7 +13,7 @@
 </head>
 
 <body>
-	<div class="d-flex  justify-content-center position-absolute top-50 start-50 translate-middle ">
+	<div class="d-flex flex-wrap justify-content-center position-absolute top-50 start-50 translate-middle ">
 		<a href="addMenu" class="d-block" style="color: black;text-decoration: none;">
 			<i class="bi bi-plus-lg  px-5 m-2 border border-2 border-dark rounded" style="font-size: 4rem;">
 
@@ -27,14 +27,28 @@
 			<i class="bi bi-book  px-5 m-2 border border-2 border-dark rounded" style="font-size: 4rem;">
 			</i>
 			<div class="px-5" style="font-size: large;">
-				メニュー
+				全メニュー
 			</div>
 		</a>
 
-		<a href="#" class="d-block" style="color: black;text-decoration: none;">
+		<a href="showAllTable" class="d-block" style="color: black;text-decoration: none;">
 			<i class="bi bi-check2 px-5 m-2 border border-2 border-dark rounded" style="font-size: 4rem;"></i>
 			<div class="px-5" style="font-size: large;">
-				Something
+				テーブル確認
+			</div>
+		</a>
+		
+		<a href="okaikeiMachi" class="d-block" style="color: black;text-decoration: none;">
+			<i class="bi bi-cash-coin px-5 m-2 border border-2 border-dark rounded" style="font-size: 4rem;"></i>
+			<div class="px-5" style="font-size: large;">
+					お会計　待ち
+			</div>
+		</a>
+		
+		<a th:href="'journelAction?tableStatus=' + *{tableStatus}" class="d-block" style="color: black;text-decoration: none;">
+			<i class="bi bi-person-lines-fill px-5 m-2 border border-2 border-dark rounded" style="font-size: 4rem;"></i>
+			<div class="px-5" style="font-size: large;">
+				　ジャーナル
 			</div>
 		</a>
 

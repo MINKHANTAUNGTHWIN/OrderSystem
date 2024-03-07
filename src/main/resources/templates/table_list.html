@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Restaurant Tables</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<style>
+		.card:hover {
+			cursor: pointer;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="container mt-5">
+		<h1 class="text-center mb-4">Restaurant Tables</h1>
+
+		<div class="row row-cols-4 ">
+			<!-- Table 1 -->
+			<div class="col mb-4" th:each="obj : ${menu}">
+				<div  th:object="${obj}"
+					th:class="'card ' + *{tableStatus == 0 ? 'text-danger' : 'bg-danger text-light'}"
+					th:onclick="showCheckInModal([[${obj}]])">
+					<div class="card-body">
+						<h5 class="card-title" th:text="*{tableId}">Table 1</h5>
+						<p th:text="*{customerName}"></p>
+						<div class="d-flex justify-content-between cursor: pointer; ">
+							<p class="card-text table-status">
+								<span th:if="*{tableStatus} == 0">Empty</span>
+								<span th:if="*{tableStatus} == 1">Occupied</span>
+							</p>
+							<p>
+								<span th:text="*{totalPeople}"></span>
+								<span>/</span>
+								<span th:text="*{tableCapacity}"></span>
+								<i class="bi bi-people-fill"></i>
+							</p>
+
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+
+			<!-- Repeat for tables 2 to 12 -->
+			<!-- ... -->
+
+		</div>
+	</div>
+
+	<div class="modal fade" id="checkInModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLable">チェックイン</h5>
+					<button type="button" class="tbn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<form action="registerCheckIn">
+					<div class="modal-body">
+						<div class="mb-3">
+							<label for="customerName" class="col-form-label">名前</label>
+							<input type="text" name="customerName" class="form-control" id="customerName">
+
+						</div>
+						<div class="mb-3">
+							<label for="noOfPeople" class="col-form-label">人数:</label>
+							<input type="number" name="noOfPeople" class="form-control" id="noOfPeople" min="1">
+						</div>
+						<div class="mb-3">
+							<label for="tableNo" class="col-form-label">テーブル番号</label>
+							<input type="number" name="tableNo" class="form-control" id="tableNo" readonly>
+						</div>
+					</div>
+					
+
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="updateCheckInModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLable">Update</h5>
+					<button type="button" class="tbn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<form >
+					<div class="modal-body">
+						<div class="mb-3">
+							<label for="customerName" class="col-form-label">名前</label>
+							<input type="text" name="customerName" class="form-control" id="cName">
+						</div>
+						<div class="mb-3">
+							<label for="noOfPeople" class="col-form-label">人数:</label>
+							<input type="number" name="noOfPeople" class="form-control" id="nPeople" min="1">
+						</div>
+						<div class="mb-3">
+							<label for="tableNo" class="col-form-label">テーブル番号</label>
+							<input type="number" name="tableNo" class="form-control" id="nTable" readonly>
+						</div>
+						<div>
+							<input type="hidden" name="customerId" id="customerId">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" formaction="/cancelAction" class="btn btn-success">Cancel</button>
+						<button type="submit" formaction="/upDateAction" class="btn btn-success">Update</button>
+					</div>
+					
+
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+		function showCheckInModal(obj) {
+
+			console.log(obj);
+			if (obj.tableStatus == 0) {
+				let checkInModal = new bootstrap.Modal(document.getElementById('checkInModal'), {});
+				checkInModal.show();
+
+				document.getElementById('tableNo').value = obj.tableId;
+			}
+
+
+			else {
+
+
+				let updateCheckInModal = new bootstrap.Modal(document.getElementById('updateCheckInModal'), {});
+				updateCheckInModal.show();
+
+				document.getElementById('cName').value = obj.customerName;
+				document.getElementById('nPeople').value = obj.totalPeople;
+				document.getElementById('nTable').value = obj.tableId;
+				document.getElementById('customerId').value = obj.customerId;
+
+			}
+
+
+
+
+
+		}
+	</script>
+
+</body>
+
+</html>
